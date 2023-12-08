@@ -11,6 +11,7 @@ namespace APIPROYECTO1.Data
 
                  DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Prenda> Prendas { get; set; }
 
         public DbSet<Accesorios> Accesorios { get; set; }
@@ -20,10 +21,15 @@ namespace APIPROYECTO1.Data
         public DbSet<Categoria> Categorias { get; set; }
 
         public DbSet<Marca> Marcas { get; set; }
+        public DbSet<Carrito> Carrito { get; set; }
+        public DbSet<DetalleCarrito> DetalleCarrito { get; set; }
+        public DbSet<Compra> Compra { get; set; }
+        public DbSet<DetalleCompra> DetalleCompra { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+
 
             modelBuilder.Entity<Prenda>()
             .HasOne(p => p.Marca)
@@ -34,6 +40,57 @@ namespace APIPROYECTO1.Data
            .HasOne(p => p.Categoria)
            .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
            .HasForeignKey(p => p.CategoriaIdCategoria);
+
+            modelBuilder.Entity<Carrito>()
+           .HasOne(p => p.Usuario)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.UsuarioidUsuario);
+
+            modelBuilder.Entity<DetalleCarrito>()
+           .HasOne(p => p.Carrito)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.CarritoIdCarrito);
+
+            modelBuilder.Entity<DetalleCarrito>()
+           .HasOne(p => p.Prenda)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.PrendaIdPrenda);
+
+           modelBuilder.Entity<DetalleCarrito>()
+          .HasOne(p => p.Accesorios)
+          .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+          .HasForeignKey(p => p.AccesorioIdAccesorio);
+
+           modelBuilder.Entity<DetalleCarrito>()
+          .HasOne(p => p.Promocion)
+          .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+          .HasForeignKey(p => p.PromocionIdPromocion);
+
+            modelBuilder.Entity<Compra>()
+           .HasOne(p => p.Usuario)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.UsuarioidUsuario);
+
+            modelBuilder.Entity<DetalleCompra>()
+          .HasOne(p => p.Compra)
+          .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+          .HasForeignKey(p => p.CompraIdCompra);
+
+            modelBuilder.Entity<DetalleCompra>()
+           .HasOne(p => p.Prenda)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.PrendaIdPrenda);
+
+            modelBuilder.Entity<DetalleCompra>()
+           .HasOne(p => p.Accesorios)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.AccesorioIdAccesorio);
+
+            modelBuilder.Entity<DetalleCompra>()
+           .HasOne(p => p.Promocion)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.PromocionIdPromocion);
+
 
             modelBuilder.Entity<Accesorios>().HasData(
                 new Accesorios()
@@ -78,6 +135,27 @@ namespace APIPROYECTO1.Data
                 Cantidad = 3,
                 Precio = 15
             }
+            );
+
+            modelBuilder.Entity<Usuario>().HasData(
+            new Usuario()
+            {
+                idUsuario=1,
+                usuario = "admin1",
+                contrasena = "1234",
+                tipo = true
+
+            },
+
+            new Usuario()
+            {
+                idUsuario = 2,
+                usuario = "cliente1",
+                contrasena = "1234",
+                tipo = false
+
+            }
+
             );
 
         }
