@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "_LoginLayout";
+}
+
+@model Usuario
+@{
+    ViewData["Title"] = "Inicio de Sesión";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Usuario</label>
+        <input asp-for="usuario" class="form-control" placeholder="Ingrese su usuario" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input asp-for="contrasena" class="form-control" type="password" placeholder="Ingrese su contraseña">
+    </div> 
+    <div class="row">
+        <div class="col-6">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+</form>
+
