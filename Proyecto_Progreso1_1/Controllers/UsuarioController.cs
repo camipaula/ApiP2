@@ -25,9 +25,9 @@ namespace Proyecto_Progreso1_1.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> login(string usuario,string contrasena )
+        public async Task<IActionResult> login(string usuario, string contrasena)
         {
-            Usuario usuario1 = await _apiService.GetUsuario(usuario,contrasena);
+            Usuario usuario1 = await _apiService.GetUsuario(usuario, contrasena);
             if (usuario1 == null)
             {
                 return View();
@@ -78,9 +78,9 @@ namespace Proyecto_Progreso1_1.Controllers
 
 
         // GET: ProductoController/Edit/5
-        public async Task<IActionResult> Edit(int idMarca)
+        public async Task<IActionResult> Edit(int idUsuario)
         {
-            Marca tipo = await _apiService.GetMarca(idMarca);
+            Usuario tipo = await _apiService.GetUsuario(idUsuario);
             if (tipo != null)
             {
                 return View(tipo);
@@ -89,14 +89,14 @@ namespace Proyecto_Progreso1_1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Marca marcac)
+        public async Task<IActionResult> Edit(Usuario usuarioo)
         {
 
-            Console.WriteLine(marcac.nombre.ToString());
-            Marca tipo2 = await _apiService.GetMarca(marcac.idMarca);
+            Console.WriteLine(usuarioo.usuario.ToString());
+            Usuario tipo2 = await _apiService.GetUsuario(usuarioo.idUsuario);
             if (tipo2 != null)
             {
-                Marca tipo3 = await _apiService.UpdateMarca(marcac.idMarca, marcac);
+                Usuario tipo3 = await _apiService.UpdateUsuario(usuarioo.idUsuario, usuarioo);
 
                 return RedirectToAction("Index");
             }
@@ -104,9 +104,9 @@ namespace Proyecto_Progreso1_1.Controllers
         }
 
         // GET: ProductoController/Delete/5
-        public async Task<IActionResult> Delete(int idMarca)
+        public async Task<IActionResult> Delete(int idUsuario)
         {
-            _apiService.DeleteMarca(idMarca);
+            _apiService.DeleteUsuario(idUsuario);
 
             return RedirectToAction("Index");
 

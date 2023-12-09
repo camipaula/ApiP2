@@ -120,5 +120,9 @@ namespace APIPROYECTO1.Controllers
             }
             return BadRequest();
         }
+        //metodos nuevos
+        // calcular el precio total 
+       
+
     }
 }

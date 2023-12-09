@@ -231,8 +231,57 @@ namespace Proyecto_Progreso1_1.NewFolder
             }
 
 
+        ///////////////////////////Marca///////////////////////////////////////
+        public async Task<List<Usuario>> GetAllUsuarios()
+        {
+
+            var response = await _httpClient.GetFromJsonAsync<List<Usuario>>("api/Usuario");
+            return response;
         }
 
+        public async Task<Usuario> GetUsuario(int IdUsuario)
+        {
+            // Obtiene 1 solo accesorio por su Id
+            var response = await _httpClient.GetFromJsonAsync<Usuario>($"api/Usuario/{IdUsuario}");
+            return response;
+        }
+
+        // Realiza una solicitud HTTP POST para crear un accesorio
+
+        public async Task<Usuario> CreateUsuario(Usuario usuario)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Usuario", usuario);
+            return await response.Content.ReadFromJsonAsync<Usuario>();
+        }
+
+        public async Task<Usuario> UpdateUsuario(int IdUsuario, Usuario usuario)
+        {
+            // Realiza una solicitud HTTP PUT para modificar un accesorio
+            var response = await _httpClient.PutAsJsonAsync($"api/Usuario/ {IdUsuario}", usuario);
+            return await response.Content.ReadFromJsonAsync<Usuario>();
+        }
+
+        // Realiza una solicitud HTTP para eliminar un accesorio
+
+        public async void DeleteUsuario(int IdUsuario)
+        {
+            _httpClient.DeleteAsync($"api/Usuario/{IdUsuario}");
+        }
+
+
+        public async Task<Usuario> GetUsuario(string usuario, string contrasena)
+        {
+            var response = await _httpClient.GetAsync("api/Usuario/" + usuario + "/" + contrasena);
+            if (response.IsSuccessStatusCode)
+            {
+                var json_response = await response.Content.ReadAsStringAsync();
+                Usuario usuarios = JsonConvert.DeserializeObject<Usuario>(json_response);
+                return usuarios;
+            }
+            return null;
+        }
+
+    }
 
 
 

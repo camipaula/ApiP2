@@ -40,5 +40,13 @@ namespace Proyecto_Progreso1_1.NewFolder
         Task<Marca> CreateMarca(Marca marca);
         Task<Marca> UpdateMarca(int IdMarca, Marca marca);
         void DeleteMarca(int IdMarca);
+
+        Task<List<Usuario>> GetAllUsuarios();
+        Task<Usuario> GetUsuario(int IdUsuario);
+        Task<Usuario> CreateUsuario(Usuario usuario);
+        Task<Usuario> UpdateUsuario(int IdUsuario, Usuario usuario);
+        void DeleteUsuario(int IdUsuario);
+
+        Task<Usuario> GetUsuario(string usuario, string contrasena);
     }
 }

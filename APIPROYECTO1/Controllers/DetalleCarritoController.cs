@@ -71,17 +71,24 @@ namespace APIPROYECTO1.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] DetalleCarritoUsuario detallecarritoUsuario)
+        public async Task<IActionResult> Post([FromBody] DetalleCarritoUsuario detallecarritoUsuario) // cuando selecciona el producto
         {
-            DetalleCarrito detallecarrito2 = await _db.DetalleCarrito.FirstOrDefaultAsync(x => x.IdDetalleCarrito.Equals(detallecarritoUsuario.IdDetalleCarrito));
+            float total = 0;
+            DetalleCarrito detallecarrito2 = await _db.DetalleCarrito.FirstOrDefaultAsync(x => x.IdDetalleCarrito==detallecarritoUsuario.IdDetalleCarrito);
             if (detallecarrito2 == null && detallecarritoUsuario != null)
             {
+                Prenda prendaComprada = await _db.Prendas.FirstOrDefaultAsync(x => x.IdPrenda == detallecarritoUsuario.PrendaIdPrenda);
+                if (prendaComprada != null)
+                {
+                    var precio = prendaComprada.Precio;
+                    total = precio * detallecarritoUsuario.Cantidad;
+                }
                 var detallecarrito = new DetalleCarrito
                 {
 
                     //Status = detallecarritoUsuario.Status,
                     Cantidad = detallecarritoUsuario.Cantidad,
-                    //PrecioTotal =  detallecarritoUsuario.PrecioTotal,
+                    PrecioTotal =  total,
                     PrendaIdPrenda = detallecarritoUsuario.PrendaIdPrenda,
                     AccesorioIdAccesorio = detallecarritoUsuario.AccesorioIdAccesorio,
                     PromocionIdPromocion = detallecarritoUsuario.PromocionIdPromocion,
