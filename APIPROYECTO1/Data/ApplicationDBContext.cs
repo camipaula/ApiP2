@@ -56,15 +56,15 @@ namespace APIPROYECTO1.Data
            .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
            .HasForeignKey(p => p.PrendaIdPrenda);
 
-           modelBuilder.Entity<DetalleCarrito>()
-          .HasOne(p => p.Accesorios)
-          .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
-          .HasForeignKey(p => p.AccesorioIdAccesorio);
+            modelBuilder.Entity<DetalleCarrito>()
+           .HasOne(p => p.Accesorios)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.AccesorioIdAccesorio);
 
-           modelBuilder.Entity<DetalleCarrito>()
-          .HasOne(p => p.Promocion)
-          .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
-          .HasForeignKey(p => p.PromocionIdPromocion);
+            modelBuilder.Entity<DetalleCarrito>()
+           .HasOne(p => p.Promocion)
+           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           .HasForeignKey(p => p.PromocionIdPromocion);
 
             modelBuilder.Entity<Compra>()
            .HasOne(p => p.Usuario)
@@ -137,10 +137,10 @@ namespace APIPROYECTO1.Data
             }
             );
 
-            modelBuilder.Entity<Usuario>().HasData(
+           /* modelBuilder.Entity<Usuario>().HasData(
             new Usuario()
             {
-                idUsuario=1,
+                idUsuario = 1,
                 usuario = "admin1",
                 contrasena = "1234",
                 tipo = true
@@ -156,7 +156,7 @@ namespace APIPROYECTO1.Data
 
             }
 
-            );
+            );*/
 
         }
     }

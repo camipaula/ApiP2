@@ -9,7 +9,7 @@ namespace Proyecto_Progreso1_1.NewFolder
     {
         //inicializa httpClient
         private readonly HttpClient _httpClient;
-        private readonly string _url = "http://localhost:5184";
+        private readonly string _url = "https://apiproyecto120231203190048.azurewebsites.net";
 
         public Services()
         {

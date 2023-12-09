@@ -8,7 +8,7 @@ namespace APIPROYECTO1.Models
         public int IdDetalleCarrito { get; set; }
         //public bool Status { get; set; }
         public int Cantidad { get; set; }
-        public float PrecioTotal { get; set; }
+        //public float PrecioTotal { get; set; }
         public int PrendaIdPrenda { get; set; }
         
         public int AccesorioIdAccesorio { get; set; }

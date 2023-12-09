@@ -10,3 +10,4 @@
         public Boolean tipo { get; set; }
     }
 }
+
