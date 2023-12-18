@@ -16,7 +16,7 @@ namespace APIPROYECTO1.Controllers
         {
             _db = db;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -25,8 +25,8 @@ namespace APIPROYECTO1.Controllers
                 List<DetalleCarrito> descripcionCarrito = await _db.DetalleCarrito
                     .Include(p => p.Carrito)
                     .Include(p => p.Prenda)
-                    .Include(p => p.Accesorios)
-                    .Include(p => p.Promocion)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
                     .ToListAsync();
 
                 return Ok(descripcionCarrito);
@@ -48,8 +48,8 @@ namespace APIPROYECTO1.Controllers
                 DetalleCarrito dc = await _db.DetalleCarrito
                     .Include(p => p.Carrito)
                     .Include(p => p.Prenda)
-                    .Include(p => p.Accesorios)
-                    .Include(p => p.Promocion)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
 
                     .FirstOrDefaultAsync(x => x.IdDetalleCarrito == IdDetalleCarrito);
 
@@ -74,7 +74,7 @@ namespace APIPROYECTO1.Controllers
         public async Task<IActionResult> Post([FromBody] DetalleCarritoUsuario detallecarritoUsuario) // cuando selecciona el producto
         {
             float total = 0;
-            DetalleCarrito detallecarrito2 = await _db.DetalleCarrito.FirstOrDefaultAsync(x => x.IdDetalleCarrito==detallecarritoUsuario.IdDetalleCarrito);
+            DetalleCarrito detallecarrito2 = await _db.DetalleCarrito.FirstOrDefaultAsync(x => x.IdDetalleCarrito == detallecarritoUsuario.IdDetalleCarrito);
             if (detallecarrito2 == null && detallecarritoUsuario != null)
             {
                 Prenda prendaComprada = await _db.Prendas.FirstOrDefaultAsync(x => x.IdPrenda == detallecarritoUsuario.PrendaIdPrenda);
@@ -88,10 +88,10 @@ namespace APIPROYECTO1.Controllers
 
                     //Status = detallecarritoUsuario.Status,
                     Cantidad = detallecarritoUsuario.Cantidad,
-                    PrecioTotal =  total,
+                    PrecioTotal = total,
                     PrendaIdPrenda = detallecarritoUsuario.PrendaIdPrenda,
-                    AccesorioIdAccesorio = detallecarritoUsuario.AccesorioIdAccesorio,
-                    PromocionIdPromocion = detallecarritoUsuario.PromocionIdPromocion,
+                    //AccesorioIdAccesorio = detallecarritoUsuario.AccesorioIdAccesorio,
+                    //PromocionIdPromocion = detallecarritoUsuario.PromocionIdPromocion,
                     CarritoIdCarrito = detallecarritoUsuario.CarritoIdCarrito,
 
                 };
@@ -102,25 +102,42 @@ namespace APIPROYECTO1.Controllers
             return BadRequest("El detallecarrito ya existe");
         }
 
-        /*  [HttpPut("{IdPrenda}")]
-          public async Task<IActionResult> Put(int IdPrenda, [FromBody] PrendaUsuario prendaUsuario)
-          {
-              Prenda actualaModificar = await _db.Prendas.FirstOrDefaultAsync(x => x.IdPrenda == IdPrenda);
-              var nombrequeyatengo = actualaModificar.Nombre;
-              Prenda tallaquequieroponer = await _db.Prendas.FirstOrDefaultAsync(x => x.Nombre.Equals(prendaUsuario.Nombre));
 
-              if ((tallaquequieroponer == null || tallaquequieroponer.Nombre.Equals(nombrequeyatengo)) && prendaUsuario != null)
-              {
-                  actualaModificar.Nombre = prendaUsuario.Nombre != null ? prendaUsuario.Nombre : actualaModificar.Nombre;
-                  actualaModificar.Descripcion = prendaUsuario.Descripcion != null ? prendaUsuario.Descripcion : actualaModificar.Descripcion;
-                  actualaModificar.Precio = prendaUsuario.Precio != null ? prendaUsuario.Precio : actualaModificar.Precio;
-                  actualaModificar.Cantidad = prendaUsuario.Cantidad != null ? prendaUsuario.Cantidad : actualaModificar.Cantidad;
-                  _db.Prendas.Update(actualaModificar);
-                  await _db.SaveChangesAsync();
-                  return Ok(actualaModificar);
-              }
-              return BadRequest("La prenda ya existe");
-          }*/
+
+
+        [HttpPost("GenerarDetalleCarrito/")]
+        public async Task<IActionResult> PostComprarDescripcion([FromBody] MandarDescripcion mandarDescripcion)
+        {
+            List<DetalleCarrito> carritodetalle = await _db.DetalleCarrito
+                    .Include(pcl => pcl.Carrito)
+                    .Include(pct => pct.Prenda)
+                    .Where(x => x.CarritoIdCarrito == mandarDescripcion.CarritoIdCarrito)
+                    .ToListAsync();
+            if (carritodetalle.Count > 0)
+            {
+                foreach (var carritod in carritodetalle)
+                {
+                    Prenda prenda = carritod.Prenda;
+                    var cantidadactual = prenda.Cantidad - carritod.Cantidad;
+                    carritod.Prenda.Cantidad = cantidadactual;
+                    var descripcion = new DetalleCompra
+                    {
+                        Cantidad = carritod.Cantidad,
+                        PrecioTotal = carritod.PrecioTotal,
+                        Status = carritod.Status,
+                        PrendaIdPrenda = carritod.PrendaIdPrenda,
+                        CompraIdCompra = mandarDescripcion.CompraIdCompra
+                    };
+                    await _db.DetalleCompra.AddAsync(descripcion);
+                    await _db.SaveChangesAsync();
+                }
+                return Ok();
+            }
+
+            return BadRequest("No existe la intencion de compra");
+        }
+
+
 
         [HttpDelete("{IdDetalleCarrito}")]
         public async Task<IActionResult> Delete(int IdDetalleCarrito)
@@ -134,5 +151,75 @@ namespace APIPROYECTO1.Controllers
             }
             return BadRequest();
         }
+
+        //metodos nuevos
+        // metodo que me retorna la lista de productos por carrito.
+        [HttpGet("porCarrito/{CarritoIdCarrito}")]
+        public async Task<IActionResult> GetDetalleCarrito(int CarritoIdCarrito)
+        {
+
+            try
+            {
+                List<DetalleCarrito> detalleCarrito = await _db.DetalleCarrito
+                    .Include(p => p.Carrito)
+                    .Include(p => p.Prenda)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
+                    .Where(x => x.CarritoIdCarrito == CarritoIdCarrito)
+                    .ToListAsync();
+
+                return Ok(detalleCarrito);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+
+        //[HttpPost("CrearNuevoDetalle/")]
+        //public async Task<IActionResult> PostCompra([FromBody]MandarDescripcion mandar)
+        //{
+
+        //    List<DetalleCarrito> detalleCarrito = await _db.DetalleCarrito
+        //            .Include(p => p.Carrito)
+        //            .Include(p => p.Prenda)
+        //            //.Include(p => p.Accesorios)
+        //            //.Include(p => p.Promocion)
+        //            .Where(x => x.CarritoIdCarrito == mandar.carritoIdCarrito)
+        //            .ToListAsync();
+
+        //    if (detalleCarrito.Count >0)
+        //    {
+        //        foreach (var viejoDetalleCarrito in detalleCarrito)
+        //        {
+        //            Prenda prenda = viejoDetalleCarrito.Prenda;
+        //            var cantidadActual = prenda.Cantidad - viejoDetalleCarrito.Cantidad;
+        //            viejoDetalleCarrito.Prenda.Cantidad = cantidadActual;
+
+        //            var descripcionNueva = new DetalleCompra
+        //            {
+        //                Cantidad = viejoDetalleCarrito.Cantidad,
+        //                PrecioTotal = viejoDetalleCarrito.PrecioTotal,
+        //                PrendaIdPrenda = viejoDetalleCarrito.PrendaIdPrenda,
+        //                AccesorioIdAccesorio = viejoDetalleCarrito.AccesorioIdAccesorio,
+        //                PromocionIdPromocion = viejoDetalleCarrito.PromocionIdPromocion,
+        //                CompraIdCompra = mandar.compraIdCompra,
+
+        //            };
+
+        //            await _db.DetalleCompra.AddAsync(descripcionNueva);
+        //            await _db.SaveChangesAsync();
+
+        //        }
+
+        //        return Ok();
+        //    }
+
+        //    return BadRequest("La lista estaba vacia");
+
+        //}
+
     }
 }

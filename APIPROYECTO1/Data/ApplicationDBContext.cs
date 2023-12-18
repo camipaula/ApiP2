@@ -56,15 +56,15 @@ namespace APIPROYECTO1.Data
            .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
            .HasForeignKey(p => p.PrendaIdPrenda);
 
-            modelBuilder.Entity<DetalleCarrito>()
-           .HasOne(p => p.Accesorios)
-           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
-           .HasForeignKey(p => p.AccesorioIdAccesorio);
+           // modelBuilder.Entity<DetalleCarrito>()
+           //.HasOne(p => p.Accesorios)
+           //.WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           //.HasForeignKey(p => p.AccesorioIdAccesorio);
 
-            modelBuilder.Entity<DetalleCarrito>()
-           .HasOne(p => p.Promocion)
-           .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
-           .HasForeignKey(p => p.PromocionIdPromocion);
+           // modelBuilder.Entity<DetalleCarrito>()
+           //.HasOne(p => p.Promocion)
+           //.WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+           //.HasForeignKey(p => p.PromocionIdPromocion);
 
             modelBuilder.Entity<Compra>()
            .HasOne(p => p.Usuario)
@@ -116,28 +116,28 @@ namespace APIPROYECTO1.Data
 
 
             modelBuilder.Entity<Promocion>().HasData(
-            new Promocion()
-            {
-                IdPromocion = 1,
-                Nombre = "Promocion 1",
-                Descripcion = "Blusa azul",
-                Marca = "shein",
-                Cantidad = 2,
-                Precio = 13
+             new Promocion()
+             {
+                 IdPromocion = 1,
+                 Nombre = "Promocion 1",
+                 Descripcion = "Blusa azul",
+                 Marca = "shein",
+                 Cantidad = 2,
+                 Precio = 13
 
-            },
-            new Promocion()
-            {
-                IdPromocion = 2,
-                Nombre = "Promocion 2",
-                Descripcion = "Aretes largos",
-                Marca = "shein",
-                Cantidad = 3,
-                Precio = 15
-            }
-            );
+             },
+             new Promocion()
+             {
+                 IdPromocion = 2,
+                 Nombre = "Promocion 2",
+                 Descripcion = "Aretes largos",
+                 Marca = "shein",
+                 Cantidad = 3,
+                 Precio = 15
+             }
+             );
 
-           /* modelBuilder.Entity<Usuario>().HasData(
+            modelBuilder.Entity<Usuario>().HasData(
             new Usuario()
             {
                 idUsuario = 1,
@@ -156,7 +156,7 @@ namespace APIPROYECTO1.Data
 
             }
 
-            );*/
+            );
 
         }
     }

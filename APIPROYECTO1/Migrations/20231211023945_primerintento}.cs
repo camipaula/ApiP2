@@ -2,16 +2,76 @@
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace APIPROYECTO1.Migrations
 {
     /// <inheritdoc />
-    public partial class aa : Migration
+    public partial class primerintento : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Accesorios",
+                columns: table => new
+                {
+                    IdAccesorio = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Marca = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accesorios", x => x.IdAccesorio);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categorias",
+                columns: table => new
+                {
+                    IdCategoria = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categorias", x => x.IdCategoria);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marcas",
+                columns: table => new
+                {
+                    IdMarca = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marcas", x => x.IdMarca);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "promociones",
+                columns: table => new
+                {
+                    IdPromocion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Marca = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_promociones", x => x.IdPromocion);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Usuarios",
                 columns: table => new
@@ -25,6 +85,36 @@ namespace APIPROYECTO1.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.idUsuario);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prendas",
+                columns: table => new
+                {
+                    IdPrenda = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<float>(type: "real", nullable: false),
+                    CategoriaIdCategoria = table.Column<int>(type: "int", nullable: false),
+                    MarcaIdMarca = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prendas", x => x.IdPrenda);
+                    table.ForeignKey(
+                        name: "FK_Prendas_Categorias_CategoriaIdCategoria",
+                        column: x => x.CategoriaIdCategoria,
+                        principalTable: "Categorias",
+                        principalColumn: "IdCategoria",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Prendas_Marcas_MarcaIdMarca",
+                        column: x => x.MarcaIdMarca,
+                        principalTable: "Marcas",
+                        principalColumn: "IdMarca",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,9 +209,9 @@ namespace APIPROYECTO1.Migrations
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    PrendaIdPrenda = table.Column<int>(type: "int", nullable: false),
-                    AccesorioIdAccesorio = table.Column<int>(type: "int", nullable: false),
-                    PromocionIdPromocion = table.Column<int>(type: "int", nullable: false),
+                    PrendaIdPrenda = table.Column<int>(type: "int", nullable: true),
+                    AccesorioIdAccesorio = table.Column<int>(type: "int", nullable: true),
+                    PromocionIdPromocion = table.Column<int>(type: "int", nullable: true),
                     CompraIdCompra = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -131,8 +221,7 @@ namespace APIPROYECTO1.Migrations
                         name: "FK_DetalleCompra_Accesorios_AccesorioIdAccesorio",
                         column: x => x.AccesorioIdAccesorio,
                         principalTable: "Accesorios",
-                        principalColumn: "IdAccesorio",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IdAccesorio");
                     table.ForeignKey(
                         name: "FK_DetalleCompra_Compra_CompraIdCompra",
                         column: x => x.CompraIdCompra,
@@ -143,23 +232,12 @@ namespace APIPROYECTO1.Migrations
                         name: "FK_DetalleCompra_Prendas_PrendaIdPrenda",
                         column: x => x.PrendaIdPrenda,
                         principalTable: "Prendas",
-                        principalColumn: "IdPrenda",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IdPrenda");
                     table.ForeignKey(
                         name: "FK_DetalleCompra_promociones_PromocionIdPromocion",
                         column: x => x.PromocionIdPromocion,
                         principalTable: "promociones",
-                        principalColumn: "IdPromocion",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Usuarios",
-                columns: new[] { "idUsuario", "contrasena", "tipo", "usuario" },
-                values: new object[,]
-                {
-                    { 1, "1234", true, "admin1" },
-                    { 2, "1234", false, "cliente1" }
+                        principalColumn: "IdPromocion");
                 });
 
             migrationBuilder.CreateIndex(
@@ -211,6 +289,16 @@ namespace APIPROYECTO1.Migrations
                 name: "IX_DetalleCompra_PromocionIdPromocion",
                 table: "DetalleCompra",
                 column: "PromocionIdPromocion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prendas_CategoriaIdCategoria",
+                table: "Prendas",
+                column: "CategoriaIdCategoria");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prendas_MarcaIdMarca",
+                table: "Prendas",
+                column: "MarcaIdMarca");
         }
 
         /// <inheritdoc />
@@ -226,10 +314,25 @@ namespace APIPROYECTO1.Migrations
                 name: "Carrito");
 
             migrationBuilder.DropTable(
+                name: "Accesorios");
+
+            migrationBuilder.DropTable(
                 name: "Compra");
 
             migrationBuilder.DropTable(
+                name: "Prendas");
+
+            migrationBuilder.DropTable(
+                name: "promociones");
+
+            migrationBuilder.DropTable(
                 name: "Usuarios");
+
+            migrationBuilder.DropTable(
+                name: "Categorias");
+
+            migrationBuilder.DropTable(
+                name: "Marcas");
         }
     }
 }

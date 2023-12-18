@@ -16,7 +16,7 @@ namespace APIPROYECTO1.Controllers
         {
             _db = db;
         }
-        
+
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -37,13 +37,13 @@ namespace APIPROYECTO1.Controllers
 
 
         }
-                
+
         [HttpGet("{IdCarrito}")]
         public async Task<IActionResult> Get(int IdCarrito)
         {
             try
             {
-               
+
                 Carrito tipo = await _db.Carrito
                     .Include(p => p.Usuario)
                     .FirstOrDefaultAsync(x => x.IdCarrito == IdCarrito);
@@ -75,7 +75,7 @@ namespace APIPROYECTO1.Controllers
                 {
                     UsuarioidUsuario = carritoUsuario.UsuarioidUsuario,
                     Fecha = carritoUsuario.Fecha,
-                  
+
                 };
                 await _db.Carrito.AddAsync(carrito);
                 await _db.SaveChangesAsync();
@@ -83,30 +83,6 @@ namespace APIPROYECTO1.Controllers
             }
             return BadRequest("El carrito ya existe");
         }
-
-
-
-
-
-        /*[HttpPut("{IdCarrito}")]
-          public async Task<IActionResult> Put(int IdCarrito, [FromBody] CarritoUsuario carritoUsuario)
-          {
-              Carrito actualaModificar = await _db.Carrito.FirstOrDefaultAsync(x => x.IdCarrito == IdCarrito);
-              var carritoqueyatengo = actualaModificar.IdCarrito;
-              Prenda prendaquequieroponer = await _db.Prendas.FirstOrDefaultAsync(x => x.Nombre.Equals(prendaUsuario.Nombre));
-
-              if ((tallaquequieroponer == null || tallaquequieroponer.Nombre.Equals(nombrequeyatengo)) && prendaUsuario != null)
-              {
-                  actualaModificar.Nombre = prendaUsuario.Nombre != null ? prendaUsuario.Nombre : actualaModificar.Nombre;
-                  actualaModificar.Descripcion = prendaUsuario.Descripcion != null ? prendaUsuario.Descripcion : actualaModificar.Descripcion;
-                  actualaModificar.Precio = prendaUsuario.Precio != null ? prendaUsuario.Precio : actualaModificar.Precio;
-                  actualaModificar.Cantidad = prendaUsuario.Cantidad != null ? prendaUsuario.Cantidad : actualaModificar.Cantidad;
-                  _db.Prendas.Update(actualaModificar);
-                  await _db.SaveChangesAsync();
-                  return Ok(actualaModificar);
-              }
-              return BadRequest("La prenda ya existe");
-          }*/
 
         [HttpDelete("{IdCarrito}")]
         public async Task<IActionResult> Delete(int IdCarrito)
@@ -122,26 +98,32 @@ namespace APIPROYECTO1.Controllers
         }
 
 
-        //nuevos 
 
-            [HttpGet("PorUsuario/{UsuarioidUsuario}")]
-            public async Task<IActionResult> GetListaCarrito(int UsuarioidUsuario)
+
+
+        [HttpPost("GenerarCompra/")]
+        public async Task<IActionResult> PostComprar([FromBody] int carritoIdCarrito)
+        {
+            Carrito carrito2 = await _db.Carrito.FirstOrDefaultAsync(x => x.IdCarrito == carritoIdCarrito);
+            if (carrito2 != null)
             {
-                try
+                var Compra = new Compra
                 {
-                List<Carrito> ListaCarrito = await _db.Carrito
-                .Include(p => p.Usuario)
-                .Where(x => x.UsuarioidUsuario == UsuarioidUsuario)
-                .ToListAsync();
+                    Fecha = carrito2.Fecha,
+                    UsuarioidUsuario = carrito2.UsuarioidUsuario,
 
-                return Ok(ListaCarrito);
-            }
-                catch (Exception ex)
-                {
-                    return BadRequest();
-                }
-
+                };
+                await _db.Compra.AddAsync(Compra);
+                await _db.SaveChangesAsync();
+                return Ok(Compra);
 
             }
+
+            return BadRequest("No existe la intencion de compra");
+        }
+
+
+
+
     }
 }

@@ -25,8 +25,8 @@ namespace APIPROYECTO1.Controllers
                 List<DetalleCompra> descripcionCompra = await _db.DetalleCompra
                     .Include(p => p.Compra)
                     .Include(p => p.Prenda)
-                    .Include(p => p.Accesorios)
-                    .Include(p => p.Promocion)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
                     .ToListAsync();
 
                 return Ok(descripcionCompra);
@@ -48,8 +48,8 @@ namespace APIPROYECTO1.Controllers
                 DetalleCompra dc = await _db.DetalleCompra
                     .Include(p => p.Compra)
                     .Include(p => p.Prenda)
-                    .Include(p => p.Accesorios)
-                    .Include(p => p.Promocion)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
 
                     .FirstOrDefaultAsync(x => x.IdDetalleCompra == IdDetalleCompra);
 
@@ -127,6 +127,32 @@ namespace APIPROYECTO1.Controllers
                 return NoContent();
             }
             return BadRequest();
+        }
+
+
+        //metodos nuevos
+        // metodo que me retorna la lista de productos por compra.
+        [HttpGet("porCompra/{CompraIdCompra}")]
+        public async Task<IActionResult> GetDetalleCompra(int CompraIdCompra)
+        {
+
+            try
+            {
+                List<DetalleCompra> detalleCompra = await _db.DetalleCompra
+                    .Include(p => p.Compra)
+                    .Include(p => p.Prenda)
+                    //.Include(p => p.Accesorios)
+                    //.Include(p => p.Promocion)
+                    .Where(x => x.CompraIdCompra == CompraIdCompra)
+                    .ToListAsync();
+
+                return Ok(detalleCompra);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }
